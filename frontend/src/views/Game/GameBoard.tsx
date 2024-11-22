@@ -12,18 +12,56 @@ function GameBoard() {
     )
   );
 
-  const handleClick = (rowIndex: number, cellIndex: number) => {
+  const [gameBoardBlocked, setGameBoardBlocked] =
+    React.useState<boolean>(false);
+
+  const handlePlayerMove = (rowIndex: number, cellIndex: number) => {
+    if (gameBoardBlocked) {
+      return;
+    }
+    setGameBoardCell(rowIndex, cellIndex, "X");
+    handleComputerMove();
+  };
+
+  const setGameBoardCell = (
+    rowIndex: number,
+    cellIndex: number,
+    value: MarkType
+  ) => {
     setGameBoard((prevBoard) => {
       const newBoard = prevBoard.map((row, i) =>
         row.map((cell, j) => {
           if (i === rowIndex && j === cellIndex) {
-            return "X";
+            return value;
           }
           return cell;
         })
       );
       return newBoard;
     });
+  };
+
+  const getRandomEmptyCellIndexes = () => {
+    while (true) {
+      const randomRow = getRandomInt(0, GameBoardHeight);
+      const randomColumn = getRandomInt(0, GameBoardWidth);
+      if (gameBoard[randomRow][randomColumn] === null) {
+        return { randomRow, randomColumn };
+      }
+    }
+  };
+
+  function getRandomInt(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  const handleComputerMove = () => {
+    setGameBoardBlocked(true);
+    const computerMove = getRandomEmptyCellIndexes();
+    setGameBoardCell(computerMove.randomRow, computerMove.randomColumn, "Y");
+    setGameBoardBlocked(false);
   };
 
   return (
@@ -33,7 +71,7 @@ function GameBoard() {
           {row.map((cell, j) => (
             <GameBoardCell
               markType={cell}
-              onClick={() => handleClick(i, j)}
+              onClick={() => handlePlayerMove(i, j)}
               key={j}
             />
           ))}
