@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
 import SignIn from "./views/SignIn";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Game from "./views/Game/Game";
