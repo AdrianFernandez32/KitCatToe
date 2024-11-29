@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Game from "./views/Game/Game";
-import Register from "./views/Register";
+import { ChakraProvider } from "@chakra-ui/react";
 import SignIn from "./views/SignIn";
 
 const root = ReactDOM.createRoot(
@@ -10,10 +10,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <BrowserRouter>
-    <Routes>
-      <Route index element={<SignIn />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/game" element={<Game />} />
-    </Routes>
+    <ChakraProvider>
+      <Routes>
+        <Route index element={<SignIn />} />
+        <Route path="/game" element={<Game />} />
+      </Routes>
+    </ChakraProvider>
   </BrowserRouter>
 );
