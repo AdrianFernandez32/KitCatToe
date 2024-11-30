@@ -16,7 +16,7 @@ function GameBoard() {
     React.useState<boolean>(false);
 
   const handlePlayerMove = (rowIndex: number, cellIndex: number) => {
-    if (gameBoardBlocked) {
+    if (gameBoardBlocked || gameBoard[rowIndex][cellIndex] !== null) {
       return;
     }
     setGameBoardCell(rowIndex, cellIndex, "X");
