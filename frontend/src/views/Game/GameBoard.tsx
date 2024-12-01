@@ -1,17 +1,19 @@
 import React from "react";
+import { checkIfPlayerWon } from "./gameUtils";
 
 type MarkType = "X" | "Y" | null;
+const GameBoardWidth = 9;
+const GameBoardHeight = 9;
 
-function GameBoard() {
-  const GameBoardWidth = 9;
-  const GameBoardHeight = 9;
-
-  const [gameBoard, setGameBoard] = React.useState<MarkType[][]>(
-    Array.from({ length: GameBoardHeight }, () =>
-      Array.from({ length: GameBoardWidth }, () => null)
-    )
-  );
-
+function GameBoard({
+  gameBoard,
+  setGameBoard,
+  handleGameEnd,
+}: {
+  gameBoard: MarkType[][];
+  setGameBoard: React.Dispatch<React.SetStateAction<MarkType[][]>>;
+  handleGameEnd: (winner: "player" | "computer") => void;
+}) {
   const [gameBoardBlocked, setGameBoardBlocked] =
     React.useState<boolean>(false);
 
@@ -20,6 +22,10 @@ function GameBoard() {
       return;
     }
     setGameBoardCell(rowIndex, cellIndex, "X");
+    if (checkIfPlayerWon(gameBoard)) {
+      handleGameEnd("player");
+      return;
+    }
     handleComputerMove();
   };
 
