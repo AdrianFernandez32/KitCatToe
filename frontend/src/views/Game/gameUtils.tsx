@@ -55,28 +55,51 @@ const checkIfPlayerWonVertically = (
   return false;
 };
 
-// const checkIfPlayerWonDiagonallyFromCell = (
-//   gameBoard: MarkType[][],
-//   rowIndex: number,
-//   cellIndex: number,
-//   rowIncrement: number,
-//   cellIncrement: number
-// ) => {
-//   let consecutiveMarks = 0;
-//   let i = rowIndex;
-//   let j = cellIndex;
+export const checkIfComputerWon = (
+  gameBoard: MarkType[][],
+  rowIndex: number,
+  cellIndex: number
+) => {
+  return (
+    checkIfComputerWonHorizontally(gameBoard, rowIndex, cellIndex) ||
+    checkIfCompuerWonVertically(gameBoard, rowIndex, cellIndex)
+  );
+};
 
-//   while (i >= 0 && i < gameBoard.length && j >= 0 && j < gameBoard[i].length) {
-//     if (gameBoard[i][j] === "X") {
-//       consecutiveMarks++;
-//       if (consecutiveMarks === GameWinningSequenceLength) {
-//         return true;
-//       }
-//     } else {
-//       consecutiveMarks = 0;
-//     }
-//     i += rowIncrement;
-//     j += cellIncrement;
-//   }
-//   return false;
-// };
+const checkIfComputerWonHorizontally = (
+  gameBoard: MarkType[][],
+  rowIndex: number,
+  cellIndex: number
+) => {
+  let consecutiveMarks = 0;
+  for (let i = 0; i < gameBoard[0].length; i++) {
+    if (gameBoard[rowIndex][i] === "Y" || i === cellIndex) {
+      consecutiveMarks++;
+      if (consecutiveMarks === GameWinningSequenceLength) {
+        return true;
+      }
+    } else {
+      consecutiveMarks = 0;
+    }
+  }
+  return false;
+};
+
+const checkIfCompuerWonVertically = (
+  gameBoard: MarkType[][],
+  rowIndex: number,
+  cellIndex: number
+) => {
+  let consecutiveMarks = 0;
+  for (let i = 0; i < gameBoard.length; i++) {
+    if (gameBoard[i][cellIndex] === "Y" || i === rowIndex) {
+      consecutiveMarks++;
+      if (consecutiveMarks === GameWinningSequenceLength) {
+        return true;
+      }
+    } else {
+      consecutiveMarks = 0;
+    }
+  }
+  return false;
+};

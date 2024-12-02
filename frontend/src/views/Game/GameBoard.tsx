@@ -1,5 +1,9 @@
 import React from "react";
-import { checkIfPlayerWon, checkIfBoardIsFull } from "./gameUtils";
+import {
+  checkIfPlayerWon,
+  checkIfBoardIsFull,
+  checkIfComputerWon,
+} from "./gameUtils";
 
 type MarkType = "X" | "Y" | null;
 const GameBoardWidth = 9;
@@ -71,6 +75,16 @@ function GameBoard({
     setGameBoardBlocked(true);
     const computerMove = getRandomEmptyCellIndexes();
     setGameBoardCell(computerMove.randomRow, computerMove.randomColumn, "Y");
+    if (
+      checkIfComputerWon(
+        gameBoard,
+        computerMove.randomRow,
+        computerMove.randomColumn
+      )
+    ) {
+      handleGameEnd("computer");
+      return;
+    }
     setGameBoardBlocked(false);
   };
 
