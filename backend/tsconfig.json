@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "outDir": "./dist", // Carpeta donde se colocarán los archivos compilados
-    "rootDir": "./src", // Carpeta donde están los archivos fuente
-    "module": "commonjs", // Módulo utilizado por Node.js
-    "target": "es6", // Versión de JavaScript a generar
-    "esModuleInterop": true, // Para manejar importaciones de módulos CommonJS
-    "strict": true, // Habilitar el modo estricto de TypeScript
-    "resolveJsonModule": true // Permite importar archivos JSON
+    "target": "es2022", // Usar ECMAScript 2022 o superior
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "include": ["src/**/*"], // Archivos que serán incluidos en la compilación
   "exclude": ["node_modules"] // Archivos y carpetas que serán excluidos

@@ -1,4 +1,7 @@
 import sql from "mssql";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const dbConfig: sql.config = {
   user: process.env.DB_USER as string,
@@ -6,8 +9,8 @@ const dbConfig: sql.config = {
   server: process.env.DB_SERVER as string,
   database: process.env.DB_DATABASE as string,
   options: {
-    encrypt: process.env.DB_ENCRYPT === "true",
-    trustServerCertificate: false,
+    encrypt: process.env.DB_ENCRYPT === "true", // Esto debe ser 'true' o 'false'
+    trustServerCertificate: false, // Ajustar según la configuración del servidor
   },
 };
 
