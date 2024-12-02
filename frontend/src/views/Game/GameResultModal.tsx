@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router";
 
 function GameResultModal({
   open,
@@ -10,6 +11,7 @@ function GameResultModal({
   handleClose: () => void;
   winner: "player" | "computer" | null;
 }) {
+  const navigate = useNavigate();
   return (
     <Modal open={open} onClose={handleClose}>
       <Box className="w-1/4 bg-white flex flex-col text-center items-center justify-center rounded-lg p-4 shadow-lg absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]">
@@ -21,6 +23,9 @@ function GameResultModal({
         <Button variant="contained" className="mt-4" onClick={handleClose}>
           Play again
         </Button>
+        <Button 
+        onClick={() => navigate("/lobby")}
+        className="mt-4">Leave to lobby</Button>
       </Box>
     </Modal>
   );
