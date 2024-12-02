@@ -7,16 +7,13 @@ export const checkIfPlayerWon = (
   rowIndex: number,
   cellIndex: number
 ) => {
-  console.log(gameBoard);
-  console.log(checkIfPlayerWonHorizontally(gameBoard, rowIndex, cellIndex));
-  console.log(checkIfPlayerWonVertically(gameBoard, rowIndex, cellIndex));
   return (
     checkIfPlayerWonHorizontally(gameBoard, rowIndex, cellIndex) ||
     checkIfPlayerWonVertically(gameBoard, rowIndex, cellIndex)
   );
 };
 
-const checkIfBoardIsFull = (gameBoard: MarkType[][]) => {
+export const checkIfBoardIsFull = (gameBoard: MarkType[][]) => {
   return gameBoard.every((row) => row.every((cell) => cell !== null));
 };
 

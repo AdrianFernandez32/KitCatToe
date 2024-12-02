@@ -1,5 +1,5 @@
 import React from "react";
-import { checkIfPlayerWon } from "./gameUtils";
+import { checkIfPlayerWon, checkIfBoardIsFull } from "./gameUtils";
 
 type MarkType = "X" | "Y" | null;
 const GameBoardWidth = 9;
@@ -24,6 +24,10 @@ function GameBoard({
     setGameBoardCell(rowIndex, cellIndex, "X");
     if (checkIfPlayerWon(gameBoard, rowIndex, cellIndex)) {
       handleGameEnd("player");
+      return;
+    }
+    if (checkIfBoardIsFull(gameBoard)) {
+      handleGameEnd("computer");
       return;
     }
     handleComputerMove();
