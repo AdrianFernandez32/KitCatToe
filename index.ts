@@ -41,3 +41,36 @@ const staticWebApp = new azure.web.StaticSite("reactStaticApp", {
 // });
 
 // export const primaryStorageKey = storageAccountKeys.keys[0].value;
+
+const sqlServer = new azure.sql.Server("sqlServer", {
+  resourceGroupName: resourceGroupName,
+  serverName: "kit-cat-toe-server",
+  administratorLogin: "clanie1barocio",
+  administratorLoginPassword: "P@ssw0rd1234",
+  location: "centralus",
+  version: "12.0",
+});
+
+const sqlDatabase = new azure.sql.Database("sqlDatabase", {
+  resourceGroupName: resourceGroupName,
+  serverName: sqlServer.name,
+  databaseName: "kit-cat-toe-db",
+  sku: {
+    name: "Basic",
+    tier: "Basic",
+    capacity: 5, // Capacidad de DTU (puedes cambiarlo según tus necesidades)
+  },
+  maxSizeBytes: 2147483648,
+});
+
+const firewallRule = new azure.sql.FirewallRule("firewallRule", {
+  resourceGroupName: resourceGroupName,
+  serverName: sqlServer.name,
+  startIpAddress: "0.0.0.0",
+  endIpAddress: "255.255.255.255",
+});
+
+// Exportar los valores de utilidad
+export const sqlServerName = sqlServer.name;
+export const sqlDatabaseName = sqlDatabase.name;
+export const sqlAdminLogin = sqlServer.administratorLogin;
