@@ -1,17 +1,21 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import bodyParser from "body-parser";
+import dotenv from "./config/dotenv";
+import db from "./config/db";
+import routes from "./routes";
+
+dotenv();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Middleware para parsear solicitudes JSON
-app.use(express.json());
+app.use(bodyParser.json());
 
-// Ruta de ejemplo
-app.get("/", (req: Request, res: Response) => {
-  res.send("¡Hola Mundo desde Express con TypeScript!");
-});
+app.use("/api", routes);
 
-// Inicia el servidor
 app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
+  console.log(`Servidor corriendo en http://localhost:${port}`);
+  db.connect();
 });
+
+export default app;

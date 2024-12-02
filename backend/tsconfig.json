@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2022", // Usar ECMAScript 2022 o superior
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"], // Archivos que serán incluidos en la compilación
+  "exclude": ["node_modules"] // Archivos y carpetas que serán excluidos
 }
