@@ -32,3 +32,25 @@ export const getUserByEmail = async (email: string) => {
 
   return result.recordset[0]; // Devuelve el primer usuario encontrado
 };
+
+export const updateUserProfile = async (
+  userId: number,
+  data: { nickname?: string; profilePictureUrl?: string }
+) => {
+  const { nickname, profilePictureUrl } = data;
+
+  const pool = await db.connect();
+  const result = await pool
+    .request()
+    .input("user_id", userId)
+    .input("nickname", nickname || null) // Si no se envía, queda nulo
+    .input("profile_picture_url", profilePictureUrl || null).query(`
+      UPDATE Usuario
+      SET 
+        nickname = COALESCE(@nickname, nickname),
+        profile_picture_url = COALESCE(@profile_picture_url, profile_picture_url)
+      WHERE id = @user_id
+    `);
+
+  return result.rowsAffected[0]; // Devuelve el número de filas afectadas
+};

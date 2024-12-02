@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByEmail = exports.createUser = void 0;
+exports.updateUserProfile = exports.getUserByEmail = exports.createUser = void 0;
 const mssql_1 = __importDefault(require("mssql")); // Importa 'sql' de 'mssql'
 const db_1 = __importDefault(require("../config/db"));
 const hash_utils_1 = require("../utils/hash.utils");
@@ -34,3 +34,20 @@ const getUserByEmail = async (email) => {
     return result.recordset[0]; // Devuelve el primer usuario encontrado
 };
 exports.getUserByEmail = getUserByEmail;
+const updateUserProfile = async (userId, data) => {
+    const { nickname, profilePictureUrl } = data;
+    const pool = await db_1.default.connect();
+    const result = await pool
+        .request()
+        .input("user_id", userId)
+        .input("nickname", nickname || null) // Si no se envía, queda nulo
+        .input("profile_picture_url", profilePictureUrl || null).query(`
+      UPDATE Usuario
+      SET 
+        nickname = COALESCE(@nickname, nickname),
+        profile_picture_url = COALESCE(@profile_picture_url, profile_picture_url)
+      WHERE id = @user_id
+    `);
+    return result.rowsAffected[0]; // Devuelve el número de filas afectadas
+};
+exports.updateUserProfile = updateUserProfile;
