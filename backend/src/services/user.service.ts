@@ -21,3 +21,14 @@ export const createUser = async (data: UserInput) => {
 
   return result.recordset;
 };
+
+export const getUserByEmail = async (email: string) => {
+  const pool = await db.connect();
+  const result = await pool.request().input("email", email).query(`
+      SELECT id, nickname, email, password
+      FROM Usuario
+      WHERE email = @email
+    `);
+
+  return result.recordset[0]; // Devuelve el primer usuario encontrado
+};
