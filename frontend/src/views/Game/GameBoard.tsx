@@ -22,7 +22,7 @@ function GameBoard({
       return;
     }
     setGameBoardCell(rowIndex, cellIndex, "X");
-    if (checkIfPlayerWon(gameBoard)) {
+    if (checkIfPlayerWon(gameBoard, rowIndex, cellIndex)) {
       handleGameEnd("player");
       return;
     }
