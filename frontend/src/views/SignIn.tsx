@@ -27,7 +27,7 @@ const SignIn = () => {
     try {
       const response = await axios.post("/api/users/login", formData);
 
-      if (response.status === 200 && response.data.successful) {
+      if (response.status === 200 && response.data.message === "Login successful") {
         login(response.data.token);
         navigate("/lobby");
       } else {
