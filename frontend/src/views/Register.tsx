@@ -1,6 +1,51 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    nickname: "",
+    password: "",
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+
+    try {
+      const response = await axios.post("/api/users/register", formData);
+
+      if (response.status === 200) {
+        navigate("/");
+      } else if (response.status === 409) {
+        setErrorMessage("A user with this email already exists");
+      } else {
+        setErrorMessage("Failed to register. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      setErrorMessage("An error occurred. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => setErrorMessage(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -20,7 +65,12 @@ const Register = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create your account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className="space-y-4 md:space-y-6" onSubmit={handleRegister}>
+              {errorMessage && (
+                <div className="text-red-500 text-sm font-medium mb-4">
+                  {errorMessage}
+                </div>
+              )}
               <div>
                 <label
                   htmlFor="email"
@@ -32,6 +82,8 @@ const Register = () => {
                   type="email"
                   name="email"
                   id="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
                   required
@@ -39,15 +91,17 @@ const Register = () => {
               </div>
               <div>
                 <label
-                  htmlFor="username"
+                  htmlFor="nickname"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Username
+                  Nickname
                 </label>
                 <input
                   type="text"
-                  name="username"
-                  id="username"
+                  name="nickname"
+                  id="nickname"
+                  value={formData.nickname}
+                  onChange={handleInputChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Mauricio Munoz"
                   required
@@ -64,6 +118,8 @@ const Register = () => {
                   type="password"
                   name="password"
                   id="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
@@ -76,7 +132,7 @@ const Register = () => {
                 Create Account
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <Link
                   to="/"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
