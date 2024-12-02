@@ -25,9 +25,15 @@ const SignIn = () => {
     setErrorMessage(null);
 
     try {
-      const response = await axios.post("/api/users/login", formData);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/login`,
+        formData
+      );
 
-      if (response.status === 200 && response.data.message === "Login successful") {
+      if (
+        response.status === 200 &&
+        response.data.message === "Login successful"
+      ) {
         login(response.data.token);
         navigate("/lobby");
       } else {
@@ -49,7 +55,7 @@ const SignIn = () => {
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      <a
+        <a
           href="/"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
         >

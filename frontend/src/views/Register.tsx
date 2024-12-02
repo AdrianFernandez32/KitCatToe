@@ -24,7 +24,10 @@ const Register = () => {
     setErrorMessage(null);
 
     try {
-      const response = await axios.post("/api/users/register", formData);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/users/register`,
+        formData
+      );
 
       if (response.status === 200) {
         navigate("/");
