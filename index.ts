@@ -58,7 +58,7 @@ const sqlDatabase = new azure.sql.Database("sqlDatabase", {
   sku: {
     name: "Basic",
     tier: "Basic",
-    capacity: 5, // Capacidad de DTU (puedes cambiarlo según tus necesidades)
+    capacity: 5,
   },
   maxSizeBytes: 2147483648,
 });
@@ -70,7 +70,6 @@ const firewallRule = new azure.sql.FirewallRule("firewallRule", {
   endIpAddress: "255.255.255.255",
 });
 
-// Exportar los valores de utilidad
 export const sqlServerName = sqlServer.name;
 export const sqlDatabaseName = sqlDatabase.name;
 export const sqlAdminLogin = sqlServer.administratorLogin;
