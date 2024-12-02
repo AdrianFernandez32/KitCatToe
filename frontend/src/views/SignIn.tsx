@@ -28,7 +28,7 @@ const SignIn = () => {
       const response = await axios.post("/api/users/login", formData);
 
       if (response.status === 200 && response.data.successful) {
-        login();
+        login(response.data.token);
         navigate("/lobby");
       } else {
         setErrorMessage("Incorrect username or password");
