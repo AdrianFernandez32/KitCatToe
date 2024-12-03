@@ -104,6 +104,7 @@ const backendApp = new azure.web.WebApp("backendApp", {
   },
 });
 
+// Configuración del Control de Origen para el Backend
 const backendSourceControl = new azure.web.WebAppSourceControl(
   "backendAppSourceControl",
   {
@@ -111,7 +112,7 @@ const backendSourceControl = new azure.web.WebAppSourceControl(
     resourceGroupName: resourceGroupName,
     repoUrl: "https://github.com/Clanie1/KitCatToe",
     branch: "main",
-    isManualIntegration: false,
+    isManualIntegration: false, // Cambiar a integración automática
     deploymentRollbackEnabled: true,
   }
 );
