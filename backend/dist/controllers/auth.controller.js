@@ -8,6 +8,7 @@ const user_service_1 = require("../services/user.service");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const loginUser = async (req, res) => {
+    console.log("Login request received");
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({ error: "Email and password are required" });

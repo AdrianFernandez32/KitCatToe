@@ -1,20 +1,32 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as resources from "@pulumi/azure-native/resources";
-import * as storage from "@pulumi/azure-native/storage";
 import * as azure from "@pulumi/azure-native";
 import * as dotenv from "dotenv";
+import * as fs from "fs";
+import * as sql from "mssql";
 
 dotenv.config();
 
 const resourceGroupName = "ProyectoFinal3";
 
-// Create an Azure resource (Storage Account)
-const storageAccount = new storage.StorageAccount("sa", {
+const storageAccount = new azure.storage.StorageAccount("sa", {
   resourceGroupName: resourceGroupName,
   sku: {
-    name: storage.SkuName.Standard_LRS,
+    name: azure.storage.SkuName.Standard_LRS,
   },
-  kind: storage.Kind.StorageV2,
+  kind: azure.storage.Kind.StorageV2,
+});
+
+const storageAccountKeys = azure.storage.listStorageAccountKeysOutput({
+  resourceGroupName: resourceGroupName,
+  accountName: storageAccount.name,
+});
+
+export const primaryStorageKey = storageAccountKeys.keys[0].value;
+
+const blobContainer = new azure.storage.BlobContainer("blobcontainer", {
+  resourceGroupName: resourceGroupName,
+  accountName: storageAccount.name,
+  containerName: "mycontainer",
 });
 
 const staticWebApp = new azure.web.StaticSite("reactStaticApp", {
@@ -34,14 +46,6 @@ const staticWebApp = new azure.web.StaticSite("reactStaticApp", {
   },
 });
 
-// Export the primary key of the Storage Account
-// const storageAccountKeys = storage.listStorageAccountKeysOutput({
-//   resourceGroupName: resourceGroupName,
-//   accountName: storageAccount.name,
-// });
-
-// export const primaryStorageKey = storageAccountKeys.keys[0].value;
-
 const sqlServer = new azure.sql.Server("sqlServer", {
   resourceGroupName: resourceGroupName,
   serverName: "kit-cat-toe-server",
@@ -58,7 +62,7 @@ const sqlDatabase = new azure.sql.Database("sqlDatabase", {
   sku: {
     name: "Basic",
     tier: "Basic",
-    capacity: 5, // Capacidad de DTU (puedes cambiarlo según tus necesidades)
+    capacity: 5,
   },
   maxSizeBytes: 2147483648,
 });
@@ -70,7 +74,91 @@ const firewallRule = new azure.sql.FirewallRule("firewallRule", {
   endIpAddress: "255.255.255.255",
 });
 
-// Exportar los valores de utilidad
+const backendAppServicePlan = new azure.web.AppServicePlan(
+  "backendAppServicePlan",
+  {
+    resourceGroupName: resourceGroupName,
+    location: "centralus",
+    sku: {
+      tier: "Basic",
+      name: "B1",
+    },
+  }
+);
+
+const backendApp = new azure.web.WebApp("backendApp", {
+  resourceGroupName: resourceGroupName,
+  location: "centralus",
+  serverFarmId: backendAppServicePlan.id,
+  siteConfig: {
+    appSettings: [
+      { name: "DB_SERVER", value: sqlServer.fullyQualifiedDomainName },
+      { name: "DB_DATABASE", value: sqlDatabase.name },
+      { name: "DB_USER", value: "clanie1barocio" },
+      { name: "DB_PASSWORD", value: "P@ssw0rd1234" },
+      { name: "JWT_SECRET", value: process.env.JWT_SECRET },
+    ],
+  },
+  identity: {
+    type: "SystemAssigned",
+  },
+});
+
+// Configuración del Control de Origen para el Backend
+const backendSourceControl = new azure.web.WebAppSourceControl(
+  "backendAppSourceControl",
+  {
+    name: backendApp.name,
+    resourceGroupName: resourceGroupName,
+    repoUrl: "https://github.com/Clanie1/KitCatToe",
+    branch: "main",
+    isManualIntegration: false, // Cambiar a integración automática
+    deploymentRollbackEnabled: true,
+  }
+);
+
+async function initializeDatabase(serverName: string, databaseName: string) {
+  const sqlConfig = {
+    user: "clanie1barocio",
+    password: "P@ssw0rd1234",
+    server: serverName,
+    database: databaseName,
+    options: {
+      encrypt: true,
+      trustServerCertificate: false,
+    },
+  };
+
+  let pool: sql.ConnectionPool | undefined;
+
+  try {
+    pool = await sql.connect(sqlConfig);
+
+    const script = fs.readFileSync("./initialize.sql", "utf-8");
+    await pool.request().query(script);
+
+    console.log("Database initialized successfully!");
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  } finally {
+    if (pool) {
+      await pool.close();
+      console.log("Database connection closed.");
+    }
+  }
+}
+
+pulumi
+  .all([sqlServer.fullyQualifiedDomainName, sqlDatabase.name])
+  .apply(async ([serverName, dbName]) => {
+    await initializeDatabase(serverName, dbName);
+  });
+
 export const sqlServerName = sqlServer.name;
 export const sqlDatabaseName = sqlDatabase.name;
-export const sqlAdminLogin = sqlServer.administratorLogin;
+export const backendAppUrl = backendApp.defaultHostName.apply(
+  (hostName) => `https://${hostName}`
+);
+export const blobContainerName = blobContainer.name;
+export const storageAccountName = storageAccount.name;
+export const blobContainerPrimaryKey = primaryStorageKey;
