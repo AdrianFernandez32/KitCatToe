@@ -6,7 +6,7 @@ import * as sql from "mssql";
 
 dotenv.config();
 
-const resourceGroupName = "ProyectoFinal3";
+const resourceGroupName = "ProyectoFinal5";
 
 const storageAccount = new azure.storage.StorageAccount("sa", {
   resourceGroupName: resourceGroupName,
@@ -74,48 +74,48 @@ const firewallRule = new azure.sql.FirewallRule("firewallRule", {
   endIpAddress: "255.255.255.255",
 });
 
-const backendAppServicePlan = new azure.web.AppServicePlan(
-  "backendAppServicePlan",
-  {
-    resourceGroupName: resourceGroupName,
-    location: "centralus",
-    sku: {
-      tier: "Basic",
-      name: "B1",
-    },
-  }
-);
+// const backendAppServicePlan = new azure.web.AppServicePlan(
+//   "backendAppServicePlan",
+//   {
+//     resourceGroupName: resourceGroupName,
+//     location: "centralus",
+//     sku: {
+//       tier: "Basic",
+//       name: "B1",
+//     },
+//   }
+// );
 
-const backendApp = new azure.web.WebApp("backendApp", {
-  resourceGroupName: resourceGroupName,
-  location: "centralus",
-  serverFarmId: backendAppServicePlan.id,
-  siteConfig: {
-    appSettings: [
-      { name: "DB_SERVER", value: sqlServer.fullyQualifiedDomainName },
-      { name: "DB_DATABASE", value: sqlDatabase.name },
-      { name: "DB_USER", value: "clanie1barocio" },
-      { name: "DB_PASSWORD", value: "P@ssw0rd1234" },
-      { name: "JWT_SECRET", value: process.env.JWT_SECRET },
-    ],
-  },
-  identity: {
-    type: "SystemAssigned",
-  },
-});
+// const backendApp = new azure.web.WebApp("backendApp", {
+//   resourceGroupName: resourceGroupName,
+//   location: "centralus",
+//   serverFarmId: backendAppServicePlan.id,
+//   siteConfig: {
+//     appSettings: [
+//       { name: "DB_SERVER", value: sqlServer.fullyQualifiedDomainName },
+//       { name: "DB_DATABASE", value: sqlDatabase.name },
+//       { name: "DB_USER", value: "clanie1barocio" },
+//       { name: "DB_PASSWORD", value: "P@ssw0rd1234" },
+//       { name: "JWT_SECRET", value: process.env.JWT_SECRET },
+//     ],
+//   },
+//   identity: {
+//     type: "SystemAssigned",
+//   },
+// });
 
 // Configuración del Control de Origen para el Backend
-const backendSourceControl = new azure.web.WebAppSourceControl(
-  "backendAppSourceControl",
-  {
-    name: backendApp.name,
-    resourceGroupName: resourceGroupName,
-    repoUrl: "https://github.com/Clanie1/KitCatToe",
-    branch: "main",
-    isManualIntegration: false, // Cambiar a integración automática
-    deploymentRollbackEnabled: true,
-  }
-);
+// const backendSourceControl = new azure.web.WebAppSourceControl(
+//   "backendAppSourceControl",
+//   {
+//     name: backendApp.name,
+//     resourceGroupName: resourceGroupName,
+//     repoUrl: "https://github.com/Clanie1/KitCatToe",
+//     branch: "main",
+//     isManualIntegration: false, // Cambiar a integración automática
+//     deploymentRollbackEnabled: true,
+//   }
+// );
 
 async function initializeDatabase(serverName: string, databaseName: string) {
   const sqlConfig = {
@@ -156,9 +156,9 @@ pulumi
 
 export const sqlServerName = sqlServer.name;
 export const sqlDatabaseName = sqlDatabase.name;
-export const backendAppUrl = backendApp.defaultHostName.apply(
-  (hostName) => `https://${hostName}`
-);
+// export const backendAppUrl = backendApp.defaultHostName.apply(
+//   (hostName) => `https://${hostName}`
+// );
 export const blobContainerName = blobContainer.name;
 export const storageAccountName = storageAccount.name;
 export const blobContainerPrimaryKey = primaryStorageKey;
