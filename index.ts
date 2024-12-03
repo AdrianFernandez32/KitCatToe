@@ -6,7 +6,7 @@ import * as sql from "mssql";
 
 dotenv.config();
 
-const resourceGroupName = "ProyectoFinal5";
+const resourceGroupName = "ProyectoFinal3";
 
 const storageAccount = new azure.storage.StorageAccount("sa", {
   resourceGroupName: resourceGroupName,
@@ -26,10 +26,10 @@ export const primaryStorageKey = storageAccountKeys.keys[0].value;
 const blobContainer = new azure.storage.BlobContainer("blobcontainer", {
   resourceGroupName: resourceGroupName,
   accountName: storageAccount.name,
-  containerName: "mycontainer",
+  containerName: "mycontainer2",
 });
 
-const staticWebApp = new azure.web.StaticSite("reactStaticApp", {
+const staticWebApp = new azure.web.StaticSite("reactStaticAppFinalUwu", {
   resourceGroupName: resourceGroupName,
   location: "centralus",
   sku: {
@@ -48,17 +48,18 @@ const staticWebApp = new azure.web.StaticSite("reactStaticApp", {
 
 const sqlServer = new azure.sql.Server("sqlServer", {
   resourceGroupName: resourceGroupName,
-  serverName: "kit-cat-toe-server",
+  serverName: "kit-cat-toe-server-2",
   administratorLogin: "clanie1barocio",
   administratorLoginPassword: "P@ssw0rd1234",
-  location: "centralus",
+  location: "westus",
   version: "12.0",
 });
 
 const sqlDatabase = new azure.sql.Database("sqlDatabase", {
   resourceGroupName: resourceGroupName,
   serverName: sqlServer.name,
-  databaseName: "kit-cat-toe-db",
+  location: "westus",
+  databaseName: "kit-cat-toe-db-2",
   sku: {
     name: "Basic",
     tier: "Basic",
@@ -117,42 +118,42 @@ const firewallRule = new azure.sql.FirewallRule("firewallRule", {
 //   }
 // );
 
-async function initializeDatabase(serverName: string, databaseName: string) {
-  const sqlConfig = {
-    user: "clanie1barocio",
-    password: "P@ssw0rd1234",
-    server: serverName,
-    database: databaseName,
-    options: {
-      encrypt: true,
-      trustServerCertificate: false,
-    },
-  };
+// async function initializeDatabase(serverName: string, databaseName: string) {
+//   const sqlConfig = {
+//     user: "clanie1barocio",
+//     password: "P@ssw0rd1234",
+//     server: serverName,
+//     database: databaseName,
+//     options: {
+//       encrypt: true,
+//       trustServerCertificate: false,
+//     },
+//   };
 
-  let pool: sql.ConnectionPool | undefined;
+//   let pool: sql.ConnectionPool | undefined;
 
-  try {
-    pool = await sql.connect(sqlConfig);
+//   try {
+//     pool = await sql.connect(sqlConfig);
 
-    const script = fs.readFileSync("./initialize.sql", "utf-8");
-    await pool.request().query(script);
+//     const script = fs.readFileSync("./initialize.sql", "utf-8");
+//     await pool.request().query(script);
 
-    console.log("Database initialized successfully!");
-  } catch (error) {
-    console.error("Error initializing database:", error);
-  } finally {
-    if (pool) {
-      await pool.close();
-      console.log("Database connection closed.");
-    }
-  }
-}
+//     console.log("Database initialized successfully!");
+//   } catch (error) {
+//     console.error("Error initializing database:", error);
+//   } finally {
+//     if (pool) {
+//       await pool.close();
+//       console.log("Database connection closed.");
+//     }
+//   }
+// }
 
-pulumi
-  .all([sqlServer.fullyQualifiedDomainName, sqlDatabase.name])
-  .apply(async ([serverName, dbName]) => {
-    await initializeDatabase(serverName, dbName);
-  });
+// pulumi
+//   .all([sqlServer.fullyQualifiedDomainName, sqlDatabase.name])
+//   .apply(async ([serverName, dbName]) => {
+//     await initializeDatabase(serverName, dbName);
+//   });
 
 export const sqlServerName = sqlServer.name;
 export const sqlDatabaseName = sqlDatabase.name;
