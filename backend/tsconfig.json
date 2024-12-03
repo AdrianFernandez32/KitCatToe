@@ -5,6 +5,7 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "./dist",
+    "skipLibCheck": true,
     "rootDir": "./src"
   },
   "include": ["src/**/*"], // Archivos que serán incluidos en la compilación

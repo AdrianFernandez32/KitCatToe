@@ -1,4 +1,4 @@
-const GameWinningSequenceLength = 5;
+export const GameWinningSequenceLength = 5;
 
 type MarkType = "X" | "Y" | null;
 
