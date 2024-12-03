@@ -54,3 +54,25 @@ export const updateUserProfile = async (
 
   return result.rowsAffected[0]; // Devuelve el número de filas afectadas
 };
+
+export const getUserById = async (id: number) => {
+  const pool = await db.connect();
+  const result = await pool.request().input("id", id).query(`
+      SELECT id, nickname, email, profile_picture_url
+      FROM Usuario
+      WHERE id = @id
+    `);
+
+  return result.recordset[0];
+};
+
+export const getUserWins = async (userId: number): Promise<number> => {
+  const pool = await db.connect();
+  const result = await pool.request().input("user_id", userId).query(`
+      SELECT COUNT(*) AS wins
+      FROM Partida
+      WHERE user_id = @user_id AND win = 1
+    `);
+
+  return result.recordset[0]?.wins || 0;
+};
